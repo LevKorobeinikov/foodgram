@@ -1,13 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.core import validators
 from django.db.models import (
-    CASCADE, SET_NULL,
-    CharField, SlugField,
-    CheckConstraint, DateTimeField,
-    ForeignKey, ImageField,
-    ManyToManyField, Model,
-    SmallIntegerField, Q,
-    TextField, UniqueConstraint,
+    CASCADE, SET_NULL, CharField, CheckConstraint,
+    DateTimeField, ForeignKey, ImageField,
+    ManyToManyField, Model, Q, SlugField,
+    SmallIntegerField, TextField, UniqueConstraint
 )
 
 from foodgram.constants import COLOR_CHOICES

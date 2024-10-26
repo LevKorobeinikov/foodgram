@@ -1,19 +1,16 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.db.models import (
-    CASCADE, BooleanField,
-    CharField, CheckConstraint,
-    DateTimeField, EmailField,
-    F, ForeignKey,
-    Model, Q,
-    UniqueConstraint,
+    CASCADE, BooleanField, CharField,
+    CheckConstraint, DateTimeField, EmailField, F,
+    ForeignKey, Model, Q, UniqueConstraint
 )
 from django.db.models.functions import Length
 from django.utils.translation import gettext_lazy as _
 
 from foodgram.constants import (
-    USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH,
-    EMAIL_MAX_LENGTH, USERS_HELP,
+    EMAIL_MAX_LENGTH, USERNAME_MAX_LENGTH,
+    USERNAME_MIN_LENGTH, USERS_HELP
 )
 
 CharField.register_lookup(Length)

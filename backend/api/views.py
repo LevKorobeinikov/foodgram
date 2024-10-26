@@ -1,29 +1,27 @@
-from rest_framework import status
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
+from djoser.views import UserViewSet
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from djoser.views import UserViewSet
 from rest_framework import status, viewsets
-from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from api.pagination import LimitPageNumberPagination
 from api.filters import AuthorAndTagFilter, IngredientSearchFilter
-from recipes.models import (
-    Cart, Favorite,
-    Ingredient, IngredientAmount,
-    Recipe, Tag,
-)
+from api.pagination import LimitPageNumberPagination
 from api.permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from api.serializers import (
-    CropRecipeSerializer, IngredientSerializer,
-    RecipeSerializer, TagSerializer,
-    FollowSerializer,
+    CropRecipeSerializer, FollowSerializer,
+    IngredientSerializer, RecipeSerializer,
+    TagSerializer
+)
+from recipes.models import (
+    Cart, Favorite, Ingredient, IngredientAmount,
+    Recipe, Tag
 )
 from users.models import Follow
 
