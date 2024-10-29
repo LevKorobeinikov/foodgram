@@ -163,7 +163,6 @@ class IngredientAmount(Model):
                 message='Минимальное количество ингридиентов 1'
             ),
         ),
-        verbose_name='Количество',
     )
 
     class Meta:
