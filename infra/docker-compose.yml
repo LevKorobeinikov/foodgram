@@ -36,7 +36,6 @@ services:
     ports:
       - 8080:80
     volumes:
-      - 
       - static:/static/
       - media:/app/media
       - redoc:/usr/share/nginx/html/api/docs/
