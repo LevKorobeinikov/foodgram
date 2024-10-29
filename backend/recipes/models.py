@@ -117,6 +117,11 @@ class Recipe(Model):
             ),
         ),
     )
+    pub_date = DateTimeField(
+        verbose_name='Дата публикации',
+        auto_now_add=True,
+        editable=False,
+    )
 
     class Meta:
         ordering = ('-pub_date',)

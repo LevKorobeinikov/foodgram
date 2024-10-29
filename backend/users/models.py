@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.db.models import (
     CASCADE, BooleanField, CharField,
@@ -14,8 +13,6 @@ from foodgram.constants import (
 )
 
 CharField.register_lookup(Length)
-
-User = get_user_model()
 
 
 class MyUser(AbstractUser):
