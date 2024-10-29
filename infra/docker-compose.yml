@@ -4,6 +4,7 @@ volumes:
   postgres_data:
   static:
   media:
+  redoc:
 
 services:
   db:
@@ -20,6 +21,7 @@ services:
     volumes:
       - static:/backend_static
       - media:/app/media
+      - redoc:/app/api/docs/
   frontend:
     image: sofary0/foodgram_frontend
     env_file: .env
@@ -34,8 +36,9 @@ services:
     ports:
       - 8080:80
     volumes:
-      - redoc:/usr/share/nginx/html/api/docs/
+      - 
       - static:/static/
       - media:/app/media
+      - redoc:/usr/share/nginx/html/api/docs/
     depends_on:
       - backend
