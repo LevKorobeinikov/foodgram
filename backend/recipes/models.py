@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.core import validators
 from django.db.models import (
     CASCADE, SET_NULL, CharField, CheckConstraint,
