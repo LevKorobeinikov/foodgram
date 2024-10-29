@@ -8,8 +8,7 @@ from django.db.models import (
 )
 
 from foodgram.constants import COLOR_CHOICES
-
-User = get_user_model()
+from users.models import MyUser
 
 
 class Ingredient(Model):
@@ -81,7 +80,7 @@ class Recipe(Model):
     """Модель для рецептов."""
 
     author = ForeignKey(
-        to=User,
+        to=MyUser,
         on_delete=SET_NULL,
         null=True,
         related_name='recipes',
@@ -184,7 +183,7 @@ class Favorite(Model):
     """Избранные рецепты."""
 
     user = ForeignKey(
-        to=User,
+        to=MyUser,
         on_delete=CASCADE,
         verbose_name='Пользователь',
         related_name='favorites',
@@ -217,7 +216,7 @@ class Cart(Model):
     """Рецепты в корзине покупок."""
 
     user = ForeignKey(
-        to=User,
+        to=MyUser,
         on_delete=CASCADE,
         verbose_name='Владелец',
         related_name='carts',
