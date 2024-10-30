@@ -60,7 +60,7 @@ class CustomUserViewSet(UserViewSet):
         author = get_object_or_404(User, id=id)
         if user == author:
             return Response(
-                {'error': 'Вы не можете отписываться от самого себя'},
+                {'error': 'Вы не можете отписываться от себя'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         follow = Follow.objects.filter(user=user, author=author)
