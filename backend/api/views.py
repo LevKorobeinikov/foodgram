@@ -15,6 +15,7 @@ from api.filters import AuthorAndTagFilter, IngredientSearchFilter
 from api.pagination import LimitPageNumberPagination
 from api.permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from api.serializers import (
+    CustomUserSerializer,
     CropRecipeSerializer, FollowSerializer,
     IngredientSerializer, RecipeSerializer,
     TagSerializer
@@ -31,6 +32,7 @@ User = get_user_model()
 class CustomUserViewSet(UserViewSet):
     """Вьюсет для модели User."""
 
+    serializer_class = CustomUserSerializer
     pagination_class = LimitPageNumberPagination
 
     @action(detail=True, permission_classes=(IsAuthenticated,))
