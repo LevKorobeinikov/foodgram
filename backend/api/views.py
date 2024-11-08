@@ -32,6 +32,7 @@ User = get_user_model()
 class CustomUserViewSet(UserViewSet):
     """Вьюсет для модели User."""
 
+    queryset = User.objects.all()
     serializer_class = CustomUserSerializer
     pagination_class = LimitPageNumberPagination
 
@@ -39,7 +40,6 @@ class CustomUserViewSet(UserViewSet):
     def subscribe(self, request, id=None):
         user = request.user
         author = get_object_or_404(User, id=id)
-
         if user == author:
             return Response(
                 {'errors': 'Вы не можете подписываться на самого себя'},
@@ -62,7 +62,7 @@ class CustomUserViewSet(UserViewSet):
         author = get_object_or_404(User, id=id)
         if user == author:
             return Response(
-                {'error': 'Вы не можете отписываться от себя'},
+                {'error': 'Вы не можете отписываться от себя!'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         follow = Follow.objects.filter(user=user, author=author)

@@ -79,7 +79,7 @@ class Recipe(Model):
     """Модель для рецептов."""
 
     author = ForeignKey(
-        to=MyUser,
+        MyUser,
         on_delete=SET_NULL,
         null=True,
         related_name='recipes',
@@ -90,7 +90,7 @@ class Recipe(Model):
         verbose_name='Название блюда',
     )
     image = ImageField(
-        upload_to='recipe_images/',
+        upload_to='media/recipes/',
         verbose_name='Картинка рецепта',
     )
     text = TextField(
@@ -98,7 +98,7 @@ class Recipe(Model):
         max_length=200,
     )
     ingredients = ManyToManyField(
-        to=Ingredient,
+        Ingredient,
         through='recipes.IngredientAmount',
         verbose_name='Ингридиенты',
         related_name='recipes',
@@ -146,13 +146,13 @@ class IngredientAmount(Model):
     """Количество ингридиентов в блюде."""
 
     ingredient = ForeignKey(
-        to=Ingredient,
+        Ingredient,
         on_delete=CASCADE,
         verbose_name='Ингридиент',
         related_name='recipe',
     )
     recipe = ForeignKey(
-        to=Recipe,
+        Recipe,
         on_delete=CASCADE,
         verbose_name='Рецепт',
         related_name='ingredient',
@@ -187,13 +187,13 @@ class Favorite(Model):
     """Избранные рецепты."""
 
     user = ForeignKey(
-        to=MyUser,
+        MyUser,
         on_delete=CASCADE,
         verbose_name='Пользователь',
         related_name='favorites',
     )
     recipe = ForeignKey(
-        to=Recipe,
+        Recipe,
         on_delete=CASCADE,
         verbose_name='Понравившиеся рецепты',
         related_name='in_favorites',
@@ -220,13 +220,13 @@ class Cart(Model):
     """Рецепты в корзине покупок."""
 
     user = ForeignKey(
-        to=MyUser,
+        MyUser,
         on_delete=CASCADE,
         verbose_name='Владелец',
         related_name='carts',
     )
     recipe = ForeignKey(
-        to=Recipe,
+        Recipe,
         on_delete=CASCADE,
         verbose_name='Рецепты в списке покупок',
         related_name='in_carts',
