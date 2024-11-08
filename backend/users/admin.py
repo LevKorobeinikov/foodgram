@@ -11,15 +11,6 @@ class MyUserAdmin(UserAdmin):
         'first_name', 'last_name',
         'email',
     )
-    fields = (
-        ('is_active',),
-        (
-            'username', 'email',
-        ),
-        (
-            'first_name', 'last_name',
-        ),
-    )
     search_fields = (
         'username', 'email',
     )
