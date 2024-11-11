@@ -31,11 +31,11 @@ services:
   nginx:
     image: sofary0/foodgram_gateway
     env_file: .env
-    ports:
-      - 8080:80
     volumes:
       - static:/static/
       - media:/app/media
       - redoc:/usr/share/nginx/html/api/docs/
     depends_on:
       - backend
+    ports:
+      - 8080:80
