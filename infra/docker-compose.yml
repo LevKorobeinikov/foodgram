@@ -24,8 +24,7 @@ services:
     image: sofary0/foodgram_frontend
     env_file: .env
     volumes:
-      - static:/frontend_static
-    command: cp -r /app/build/. /frontend_static/
+      - static:/app/result_build/
     depends_on:
       - db
   nginx:
