@@ -10,7 +10,6 @@ services:
     env_file: .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
   backend:
     image: sofary0/foodgram_backend
     env_file: .env
@@ -20,6 +19,7 @@ services:
       - static:/backend_static
       - media:/app/media
       - redoc:/app/api/docs/
+    restart: always
   frontend:
     image: sofary0/foodgram_frontend
     env_file: .env
