@@ -1,12 +1,14 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.http import require_GET
 from djoser.views import UserViewSet
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
@@ -205,3 +207,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
             {'errors': 'Рецепт уже удален'},
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+@require_GET
+def short_url(request, pk):
+    try:
+        Recipe.objects.filter(pk=pk).exists()
+        return redirect(f'/recipes/{pk}/')
+    except Exception:
+        raise ValidationError(f'Recipe "{pk}" does not exist.')
