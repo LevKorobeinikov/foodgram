@@ -1,7 +1,8 @@
 from django.db.models import (
     CASCADE, CharField, ForeignKey,
     ImageField, ManyToManyField, Model,
-    SlugField, PositiveSmallIntegerField, TextField, UniqueConstraint
+    SlugField, PositiveSmallIntegerField, TextField,
+    UniqueConstraint
 )
 from django.core.validators import MinValueValidator, RegexValidator
 
@@ -50,11 +51,12 @@ class Tag(Model):
     slug = SlugField(
         max_length=TAG_SLUG_MAX_LENGTH,
         unique=True,
-        validators=[RegexValidator(
-            regex=r'^[-a-zA-Z0-9_]+$',
-            message='Слаг содержит недопустимые символы. Используйте только '
-                    'буквы, цифры и символ подчеркивания.',
-        ),],
+        validators=[
+            RegexValidator(
+                regex=r'^[-a-zA-Z0-9_]+$',
+                message='Используйте буквы, цифры и символ подчеркивания.'
+            )
+        ],
         verbose_name='Слаг тега',
         help_text='Введите уникальный слаг для тега',
     )
