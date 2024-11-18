@@ -1,16 +1,14 @@
-from django.db.models import (
-    CASCADE, CharField, ForeignKey,
-    ImageField, ManyToManyField, Model,
-    SlugField, PositiveSmallIntegerField, TextField,
-    UniqueConstraint
-)
 from django.core.validators import MinValueValidator, RegexValidator
+from django.db.models import (CASCADE, CharField, ForeignKey, ImageField,
+                              ManyToManyField, Model,
+                              PositiveSmallIntegerField, SlugField, TextField,
+                              UniqueConstraint)
 
-from foodgram.constants import (
-    INGREDIENT_NAME_MAX_LENGTH, MEASUREMENT_UNIT_MAX_LENGTH,
-    TAG_NAME_MAX_LENGTH, TAG_SLUG_MAX_LENGTH,
-    RECIPE_NAME_MAX_LENGTH, COOKING_TIME_MIN, INGREDIENT_AMOUNT_MIN,
-)
+from foodgram.constants import (COOKING_TIME_MIN, INGREDIENT_AMOUNT_MIN,
+                                INGREDIENT_NAME_MAX_LENGTH,
+                                MEASUREMENT_UNIT_MAX_LENGTH,
+                                RECIPE_NAME_MAX_LENGTH, TAG_NAME_MAX_LENGTH,
+                                TAG_SLUG_MAX_LENGTH)
 from users.models import MyUser
 
 

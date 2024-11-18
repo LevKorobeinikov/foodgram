@@ -1,15 +1,12 @@
 from django.contrib.auth.models import AbstractUser
-from django.db.models import (
-    CASCADE, ImageField, CharField,
-    CheckConstraint, EmailField, F,
-    ForeignKey, Model, Q, UniqueConstraint
-)
+from django.db.models import (CASCADE, CharField, CheckConstraint, EmailField,
+                              F, ForeignKey, ImageField, Model, Q,
+                              UniqueConstraint)
 from django.db.models.functions import Length
 
-from foodgram.constants import (
-    EMAIL_MAX_LENGTH, USERNAME_MAX_LENGTH,
-    USERNAME_MIN_LENGTH, USERS_HELP, PASSWORD_MAX_LENGTH
-)
+from foodgram.constants import (EMAIL_MAX_LENGTH, PASSWORD_MAX_LENGTH,
+                                USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH,
+                                USERS_HELP)
 
 CharField.register_lookup(Length)
 

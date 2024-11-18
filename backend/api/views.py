@@ -8,27 +8,21 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import (
-    AllowAny, IsAuthenticated,
-    IsAuthenticatedOrReadOnly
-)
+from rest_framework.permissions import (AllowAny, IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import CustomLimitPagination
 from api.permissions import IsAdminAuthorOrReadOnly
-from api.serializers import (
-    AvatarSerializer, CustomUserSerializer,
-    FavoriteRecipeSerializer, IngredientSerializer,
-    RecipeReadSerializer, RecipeWriteSerializer,
-    SubscriberDetailSerializer, SubscriberSerializer,
-    TagSerializer
-)
-from recipes.models import (
-    Favorite, Ingredient, Recipe,
-    RecipeIngredient, ShoppingList, Tag
-)
+from api.serializers import (AvatarSerializer, CustomUserSerializer,
+                             FavoriteRecipeSerializer, IngredientSerializer,
+                             RecipeReadSerializer, RecipeWriteSerializer,
+                             SubscriberDetailSerializer, SubscriberSerializer,
+                             TagSerializer)
+from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                            ShoppingList, Tag)
 from users.models import Follow
 
 User = get_user_model()
