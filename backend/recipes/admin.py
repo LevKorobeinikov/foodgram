@@ -1,27 +1,36 @@
 from django.contrib import admin
 
-from recipes.models import Cart, Favorite, Ingredient, Recipe, Tag
+from foodgram.constants import INLINE_EXTRA
+from recipes.models import Ingredient, Recipe, Tag
 
 
-class TagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'color')
+class RecipeIngredientsInLine(admin.TabularInline):
+    model = Recipe.ingredients.through
+    extra = INLINE_EXTRA
 
 
+class RecipeTagsInLine(admin.TabularInline):
+    model = Recipe.tags.through
+    extra = INLINE_EXTRA
+
+
+@admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'measurement_unit')
-    list_filter = ('name',)
+    list_display = ('id', 'name', 'measurement_unit',)
+    search_fields = ('name',)
+    empty_value_display = '-empty-'
 
 
+@admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'author', 'count_favorites')
-    list_filter = ('author', 'name', 'tags')
+    list_display = ('id', 'name', 'text', 'author',)
+    search_fields = ('name', 'author',)
+    inlines = (RecipeIngredientsInLine, RecipeTagsInLine)
+    empty_value_display = '-empty-'
 
-    def count_favorites(self, obj):
-        return obj.favorites.count()
 
-
-admin.site.register(Tag, TagAdmin)
-admin.site.register(Ingredient, IngredientAdmin)
-admin.site.register(Recipe, RecipeAdmin)
-admin.site.register(Cart)
-admin.site.register(Favorite)
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'slug',)
+    search_fields = ('name',)
+    empty_value_display = '-empty-'

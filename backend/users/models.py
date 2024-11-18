@@ -1,15 +1,14 @@
 from django.contrib.auth.models import AbstractUser
 from django.db.models import (
-    CASCADE, BooleanField, CharField,
-    CheckConstraint, DateTimeField, EmailField, F,
+    CASCADE, ImageField, CharField,
+    CheckConstraint, EmailField, F,
     ForeignKey, Model, Q, UniqueConstraint
 )
 from django.db.models.functions import Length
-from django.utils.translation import gettext_lazy as _
 
 from foodgram.constants import (
     EMAIL_MAX_LENGTH, USERNAME_MAX_LENGTH,
-    USERNAME_MIN_LENGTH, USERS_HELP
+    USERNAME_MIN_LENGTH, USERS_HELP, PASSWORD_MAX_LENGTH
 )
 
 CharField.register_lookup(Length)
@@ -41,13 +40,13 @@ class MyUser(AbstractUser):
         help_text=USERS_HELP,
     )
     password = CharField(
-        verbose_name=_('Пароль'),
-        max_length=128,
+        max_length=PASSWORD_MAX_LENGTH,
         help_text=USERS_HELP,
     )
-    is_active = BooleanField(
-        verbose_name='Активирован',
-        default=True,
+    avatar = ImageField(
+        blank=True,
+        null=True,
+        upload_to='media/avatars/',
     )
 
     class Meta:
@@ -62,27 +61,22 @@ class MyUser(AbstractUser):
         )
 
     def __str__(self) -> str:
-        return f'{self.username}: {self.email}'
+        return self.username
 
 
 class Follow(Model):
     """Модель подписок."""
     author = ForeignKey(
+        MyUser,
         verbose_name='Автор рецепта',
         related_name='subscribers',
-        to=MyUser,
         on_delete=CASCADE,
     )
     user = ForeignKey(
+        MyUser,
         verbose_name='Подписчики',
         related_name='subscriptions',
-        to=MyUser,
         on_delete=CASCADE,
-    )
-    date_added = DateTimeField(
-        verbose_name='Дата создания подписки',
-        auto_now_add=True,
-        editable=False,
     )
 
     class Meta:

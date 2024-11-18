@@ -8,20 +8,21 @@ from recipes.models import Ingredient
 
 
 class Command(BaseCommand):
-    help = 'Import data from csv file into Ingredient model in database'
+    help = 'Импорт данных из csv-файла в модель Ingredient в базе данных'
 
     def add_arguments(self, parser):
-        parser.add_argument('--path', type=str, help='Path to file')
+        parser.add_argument('--path', type=str, help='Путь к файлу')
 
     def handle(self, *args, **options):
         success_count = 0
-        print('Loading data...')
+        print('Загрузка данных')
         with open(
                 f'{settings.BASE_DIR}/data/ingredients.csv',
                 'r',
                 encoding='utf-8',
         ) as csv_file:
             reader = csv.reader(csv_file)
+
             for row in reader:
                 name_csv = 0
                 unit_csv = 1
@@ -33,7 +34,7 @@ class Command(BaseCommand):
                     if created:
                         success_count += 1
                     if not created:
-                        print(f'Ingredient {obj} already exists in database')
+                        print(f'Ингредиент {obj} уже существует в базе данных')
                 except IntegrityError as err:
-                    print(f'Error in row {row}: {err}')
-        print(f'{success_count} entries were imported from .csv file.')
+                    print(f'Ошибка в строке {row}: {err}')
+        print(f'{success_count} записей было импортировано из csv-файла.')

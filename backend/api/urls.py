@@ -3,22 +3,24 @@ from django.views.generic import TemplateView
 from rest_framework.routers import DefaultRouter
 
 from api.views import (
-    CustomUserViewSet, IngredientsViewSet, RecipeViewSet,
-    TagsViewSet
+    CustomUserViewSet, IngredientViewSet,
+    RecipeViewSet, TagViewSet
 )
 
 app_name = 'api'
-router_v1 = DefaultRouter()
-router_v1.register('tags', TagsViewSet, 'tags')
-router_v1.register('ingredients', IngredientsViewSet, 'ingredients')
-router_v1.register('recipes', RecipeViewSet, 'recipes')
-router_v1.register('users', CustomUserViewSet, 'users')
+
+router = DefaultRouter()
+router.register('ingredients', IngredientViewSet, 'ingredients')
+router.register('recipes', RecipeViewSet, 'recipes')
+router.register('tags', TagViewSet, 'tags')
+router.register('users', CustomUserViewSet, 'users')
 
 urlpatterns = [
-    path('', include(router_v1.urls)),
+    path('', include(router.urls)),
     path('', include('djoser.urls')),
     path('docs/', TemplateView.as_view(
-        template_name='docs/redoc.html'), name='redoc'
+        template_name='docs/redoc.html'),
+        name='redoc'
     ),
     path('auth/', include('djoser.urls.authtoken')),
 ]

@@ -129,10 +129,26 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-    - name: Send message
+    - name: Send message to Telegram
       uses: appleboy/telegram-action@master
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: ${{ github.workflow }} успешно выполнен!
+        message: |
+          ${{ github.workflow }} успешно выполнен!
+          Пользователь: ${{ github.actor }}
 
+  send_failure_message:
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: deploy
+    steps:
+    - name: Send failure message to Telegram
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: |
+          Ошибка! ${{ github.workflow }} не завершился успешно!
+          ${{ github.repository }} завершился с проблемой!
+          Пользователь: ${{ github.actor }}
