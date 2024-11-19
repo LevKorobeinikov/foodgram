@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 from django.db.models import (CASCADE, CharField, CheckConstraint, EmailField,
                               F, ForeignKey, ImageField, Model, Q,
                               UniqueConstraint)
@@ -25,6 +26,12 @@ class MyUser(AbstractUser):
         max_length=USERNAME_MAX_LENGTH,
         unique=True,
         help_text=USERS_HELP,
+        validators=[
+            RegexValidator(
+                regex=r'^[\w.@+-]+$',
+                message='Username contains restricted symbols.'
+            ),
+        ],
     )
     first_name = CharField(
         verbose_name='Имя',
