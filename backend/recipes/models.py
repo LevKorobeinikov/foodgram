@@ -1,6 +1,6 @@
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db.models import (CASCADE, CharField, ForeignKey, ImageField,
-                              ManyToManyField, Model,
+                              ManyToManyField, Model, DateTimeField,
                               PositiveSmallIntegerField, SlugField, TextField,
                               UniqueConstraint)
 
@@ -112,6 +112,11 @@ class Recipe(Model):
         related_name='recipes',
         verbose_name='Теги рецепта',
         help_text='Добавьте теги для рецепта',
+    )
+    pub_date = DateTimeField(
+        auto_now_add=True,
+        blank=True,
+        verbose_name='дата публикации рецепта',
     )
 
     class Meta:
