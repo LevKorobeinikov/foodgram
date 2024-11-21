@@ -72,24 +72,24 @@ class Follow(Model):
     """Модель подписок."""
     author = ForeignKey(
         MyUser,
-        verbose_name='Автор рецепта',
-        related_name='subscribers',
+        related_name='following',
+        verbose_name='Author',
         on_delete=CASCADE,
     )
     user = ForeignKey(
         MyUser,
-        verbose_name='Подписчики',
-        related_name='subscriptions',
+        related_name='follower',
+        verbose_name='Follower',
         on_delete=CASCADE,
     )
 
     class Meta:
-        verbose_name = 'Подписка'
-        verbose_name_plural = 'Подписки'
+        verbose_name = 'Subscription'
+        verbose_name_plural = 'Subscriptions'
         constraints = (
             UniqueConstraint(
                 fields=('author', 'user'),
-                name='\nRepeat subscription\n',
+                name='unique_follow'
             ),
             CheckConstraint(
                 check=~Q(author=F('user')),
