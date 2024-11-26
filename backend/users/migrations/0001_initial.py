@@ -58,14 +58,17 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='follow',
-            constraint=models.UniqueConstraint(fields=('author', 'user'), name='unique_follow'),
+            constraint=models.UniqueConstraint(
+                fields=('author', 'user'), name='unique_follow'),
         ),
         migrations.AddConstraint(
             model_name='follow',
-            constraint=models.CheckConstraint(check=models.Q(('author', models.F('user')), _negated=True), name='\nNo self sibscription\n'),
+            constraint=models.CheckConstraint(check=models.Q(
+                ('author', models.F('user')), _negated=True), name='\nNo self sibscription\n'),
         ),
         migrations.AddConstraint(
             model_name='myuser',
-            constraint=models.CheckConstraint(check=models.Q(('username__length__gte', 3)), name='\nusername is too short\n'),
+            constraint=models.CheckConstraint(check=models.Q(
+                ('username__length__gte', 3)), name='\nusername is too short\n'),
         ),
     ]

@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', '123')
 
 DEBUG = False
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(', ')
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'api.apps.ApiConfig',
