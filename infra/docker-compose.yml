@@ -19,14 +19,13 @@ services:
     volumes:
       - static:/backend_static/
       - media:/app/media/
-      - redoc:/app/api/docs/
     restart: always
 
   frontend:
     image: sofary0/foodgram_frontend
     env_file: .env
     volumes:
-      - ../frontend/:/app/result_build/    
+      - static:/app/result_build/    
     depends_on:
       - db
 
@@ -35,7 +34,6 @@ services:
     restart: always
     env_file: .env
     volumes:
-      - redoc:/usr/share/nginx/html/api/docs/
       - static:/static/
       - media:/app/media
     depends_on:

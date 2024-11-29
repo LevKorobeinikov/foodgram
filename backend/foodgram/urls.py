@@ -10,11 +10,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     path('s/<int:pk>/', short_url, name='short_url'),
-    path(
-        'redoc/',
-        TemplateView.as_view(template_name='redoc.html'),
-        name='redoc'
-    ),
 ]
 
 if settings.DEBUG:
