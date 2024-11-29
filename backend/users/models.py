@@ -60,7 +60,7 @@ class MyUser(AbstractUser):
         constraints = (
             CheckConstraint(
                 check=Q(username__length__gte=USERNAME_MIN_LENGTH),
-                name='\nusername is too short\n',
+                name='username is too short',
             ),
         )
 
@@ -93,7 +93,7 @@ class Follow(Model):
             ),
             CheckConstraint(
                 check=~Q(author=F('user')),
-                name='\nNo self sibscription\n'
+                name='No self sibscription'
             ),
         )
 
