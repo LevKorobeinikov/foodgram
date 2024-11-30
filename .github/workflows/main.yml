@@ -120,10 +120,10 @@ jobs:
           sudo docker compose -f infra/docker-compose.yml pull
           sudo docker compose -f infra/docker-compose.yml down
           sudo docker compose -f infra/docker-compose.yml up -d
-          sudo docker compose -f infra/docker-compose.yml exec backend python manage.py migrations
+          sudo docker compose -f infra/docker-compose.yml exec backend python manage.py makemigrations
           sudo docker compose -f infra/docker-compose.yml exec backend python manage.py migrate || exit 1
           sudo docker compose -f infra/docker-compose.yml exec backend python manage.py import_data
-          sudo docker compose -f infra/docker-compose.yml exec backend python manage.py collectstatic
+          sudo docker compose -f infra/docker-compose.yml exec backend python manage.py collectstatic --noinput
           sudo docker compose -f infra/docker-compose.yml exec backend cp -r /app/collected_static/. /backend_static/static/
 
   send_message:
