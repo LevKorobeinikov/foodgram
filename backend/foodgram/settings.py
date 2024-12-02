@@ -13,7 +13,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
-CSRF_TRUSTED_ORIGINS = ['https://foooodgram.duckdns.org',]
+CSRF_TRUSTED_ORIGINS = ['https://foooodgram.duckdns.org']
 
 INSTALLED_APPS = [
     'api.apps.ApiConfig',
