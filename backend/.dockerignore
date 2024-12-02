@@ -2,4 +2,3 @@ venv
 .git
 db.sqlite3
 .env
-collected_static
