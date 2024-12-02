@@ -24,11 +24,12 @@ Foodgram — это сайт, где пользователи могут пуб�
 
 1. Клонировать репозиторий и перейти в него:
     ```bash
-    git clone https://github.com/LevKorobeinikov/Foodgram.git
+    git clone git@github.com:LevKorobeinikov/foodgram.git
     cd Foodgram
     ```
 
 2. Создать и активировать виртуальное окружение:
+
     Для Windows:
     ```bash
     python -m venv venv
@@ -95,6 +96,5 @@ Foodgram — это сайт, где пользователи могут пуб�
 Изучите фронтенд веб-приложения по адресу [http://localhost](http://localhost), а спецификацию API — по адресу [http://localhost/api/docs/](http://localhost/api/docs/).
 
 ## Автор проекта
-
-**Лев Коробейников**  
-[GitHub: LevKorobeinikov](https://github.com/LevKorobeinikov)
+ 
+[LevKorobeinikov](https://github.com/LevKorobeinikov)
