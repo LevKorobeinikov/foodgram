@@ -1,3 +1,4 @@
+from django.contrib.admin import SimpleListFilter
 from django_filters.rest_framework import FilterSet, filters
 
 from recipes.models import Ingredient, Recipe, Tag
@@ -30,22 +31,59 @@ class RecipeFilter(FilterSet):
         model = Recipe
         fields = ('tags', 'author', 'is_favorited', 'is_in_shopping_cart')
 
-    def filter_is_favorited(self, queryset, name, value):
+    def filter_is_favorited(self, recipes, name, value):
         user = (
             self.request.user
             if self.request.user.is_authenticated
             else None
         )
         if value and user:
-            return queryset.filter(favorite__user_id=user.id)
-        return queryset
+            return recipes.filter(favorite__user_id=user.id)
+        return recipes
 
-    def filter_is_in_shopping_cart(self, queryset, name, value):
+    def filter_is_in_shopping_cart(self, recipes, name, value):
         user = (
             self.request.user
             if self.request.user.is_authenticated
             else None
         )
         if value and user:
-            return queryset.filter(shopping_list__user_id=user.id)
+            return recipes.filter(shopping_list__user_id=user.id)
+        return recipes
+
+
+class CookingTimeFilter(SimpleListFilter):
+    title = 'Время приготовления'
+    parameter_name = 'cooking_time_category'
+
+    def lookups(self, request, model_admin):
+        cooking_times = Recipe.objects.values_list('cooking_time', flat=True)
+        if not cooking_times:
+            return []
+
+        sorted_times = sorted(cooking_times)
+        n = sorted_times[len(sorted_times) // 3]
+        m = sorted_times[2 * len(sorted_times) // 3]
+
+        quick_count = Recipe.objects.filter(cooking_time__lt=n).count()
+        medium_count = Recipe.objects.filter(
+            cooking_time__gte=n,
+            cooking_time__lt=m).count()
+        long_count = Recipe.objects.filter(cooking_time__gte=m).count()
+
+        return [
+            ('quick', f'быстрее {n} мин ({quick_count})'),
+            ('medium', f'{n}-{m} мин ({medium_count})'),
+            ('long', f'дольше {m} мин ({long_count})'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'quick':
+            return queryset.filter(cooking_time__lt=int(self.n))
+        elif self.value() == 'medium':
+            return queryset.filter(
+                cooking_time__gte=int(self.n), cooking_time__lt=int(self.m)
+            )
+        elif self.value() == 'long':
+            return queryset.filter(cooking_time__gte=int(self.m))
         return queryset

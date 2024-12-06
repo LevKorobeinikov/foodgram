@@ -5,14 +5,12 @@ from django.db.models import (CASCADE, CharField, CheckConstraint, EmailField,
                               UniqueConstraint)
 from django.db.models.functions import Length
 
-from foodgram.constants import (EMAIL_MAX_LENGTH, PASSWORD_MAX_LENGTH,
-                                USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH,
-                                USERS_HELP)
+from recipes.constants import EMAIL_MAX_LENGTH, USERNAME_MAX_LENGTH, USERS_HELP
 
 CharField.register_lookup(Length)
 
 
-class MyUser(AbstractUser):
+class ProjectUser(AbstractUser):
     """Модель пользователя."""
 
     email = EmailField(
@@ -22,16 +20,11 @@ class MyUser(AbstractUser):
         help_text=USERS_HELP,
     )
     username = CharField(
-        verbose_name='Уникальный юзернейм',
+        verbose_name='Юзернейм',
         max_length=USERNAME_MAX_LENGTH,
         unique=True,
         help_text=USERS_HELP,
-        validators=[
-            RegexValidator(
-                regex=r'^[\w.@+-]+$',
-                message='Username contains restricted symbols.'
-            ),
-        ],
+        validators=[RegexValidator(regex=r'^[\w.@+-]+$')],
     )
     first_name = CharField(
         verbose_name='Имя',
@@ -41,10 +34,6 @@ class MyUser(AbstractUser):
     last_name = CharField(
         verbose_name='Фамилия',
         max_length=USERNAME_MAX_LENGTH,
-        help_text=USERS_HELP,
-    )
-    password = CharField(
-        max_length=PASSWORD_MAX_LENGTH,
         help_text=USERS_HELP,
     )
     avatar = ImageField(
@@ -57,12 +46,6 @@ class MyUser(AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
         ordering = ('username',)
-        constraints = (
-            CheckConstraint(
-                check=Q(username__length__gte=USERNAME_MIN_LENGTH),
-                name='username is too short',
-            ),
-        )
 
     def __str__(self) -> str:
         return self.username
@@ -71,20 +54,20 @@ class MyUser(AbstractUser):
 class Follow(Model):
     """Модель подписок."""
     author = ForeignKey(
-        MyUser,
-        related_name='following',
-        verbose_name='Author',
+        ProjectUser,
+        related_name='authors',
+        verbose_name='Автор',
         on_delete=CASCADE,
     )
     user = ForeignKey(
-        MyUser,
-        related_name='follower',
-        verbose_name='Follower',
+        ProjectUser,
+        related_name='followers',
+        verbose_name='Подписчик',
         on_delete=CASCADE,
     )
 
     class Meta:
-        verbose_name = 'Subscription'
+        verbose_name = 'Подписки'
         verbose_name_plural = 'Subscriptions'
         constraints = (
             UniqueConstraint(

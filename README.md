@@ -25,7 +25,7 @@ Foodgram — это сайт, где пользователи могут пуб�
 1. Клонировать репозиторий и перейти в него:
     ```bash
     git clone git@github.com:LevKorobeinikov/foodgram.git
-    cd Foodgram
+    cd foodgram
     ```
 
 2. Создать и активировать виртуальное окружение:
@@ -97,4 +97,69 @@ Foodgram — это сайт, где пользователи могут пуб�
 
 ## Автор проекта
  
-[LevKorobeinikov](https://github.com/LevKorobeinikov)
+[Коробекйников Лев Сергеевич](https://github.com/LevKorobeinikov)
+
+## Запуск проекта локально (без Docker)
+
+1. **Клонируйте репозиторий и перейдите в папку проекта:**
+
+    ```bash
+    git clone git@github.com:LevKorobeinikov/foodgram.git
+    cd foodgram
+    ```
+
+2. **Создайте виртуальное окружение и активируйте его:**
+
+    Для Windows:
+    ```bash
+    python -m venv venv
+    venv\Scripts\activate
+    ```
+
+    Для Linux/macOS:
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+
+3. **Установите зависимости:**
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. **Настройте базу данных SQLite:**
+
+    Убедитесь, что в `settings.py` настроена SQLite:
+    ```python
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+    ```
+
+5. **Примените миграции базы данных:**
+
+    ```bash
+    python manage.py makemigrations
+    python manage.py migrate
+    ```
+
+6. **Создайте суперпользователя:**
+
+    ```bash
+    python manage.py createsuperuser
+    ```
+
+7. **Запустите сервер разработки:**
+
+    ```bash
+    python manage.py runserver
+    ```
+
+8. **Откройте проект в браузере:**
+
+    Перейдите по адресу [http://127.0.0.1:8000](http://127.0.0.1:8000).
+
