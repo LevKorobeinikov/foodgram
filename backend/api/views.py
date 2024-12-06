@@ -19,9 +19,8 @@ from api.serializers import (AvatarSerializer, IngredientSerializer,
                              ProjectUserSerializer, RecipeReadSerializer,
                              RecipeWriteSerializer, ShortRecipeSerializer,
                              SubscriberDetailSerializer, TagSerializer)
-from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                            ShoppingList, Tag)
-from users.models import Follow
+from recipes.models import (Favorite, Follow, Ingredient, Recipe,
+                            RecipeIngredient, ShoppingList, Tag)
 
 User = get_user_model()
 

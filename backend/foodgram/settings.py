@@ -27,7 +27,6 @@ INSTALLED_APPS = [
     'djoser',
     'django_filters',
     'api.apps.ApiConfig',
-    'users.apps.UsersConfig',
     'recipes.apps.RecipesConfig',
 ]
 
@@ -79,7 +78,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'users.ProjectUser'
+AUTH_USER_MODEL = 'recipes.ProjectUser'
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
