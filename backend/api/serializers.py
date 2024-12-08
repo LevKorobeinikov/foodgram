@@ -21,7 +21,7 @@ class ProjectUserSerializer(UserSerializer):
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
-        return request.user.follower.filter(author=author).exists()
+        return request.user.followers.filter(author=author).exists()
 
 
 class AvatarSerializer(serializers.ModelSerializer):

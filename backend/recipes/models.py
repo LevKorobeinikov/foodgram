@@ -50,12 +50,20 @@ class ProjectUser(AbstractUser):
         upload_to='media/avatars/',
     )
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = (
+        'username',
+        'first_name',
+        'last_name',
+        'password',
+    )
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
         ordering = ('username',)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.username
 
 
@@ -88,7 +96,7 @@ class Follow(Model):
             ),
         )
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f'{self.user.username} -> {self.author.username}'
 
 
