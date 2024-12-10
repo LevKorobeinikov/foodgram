@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Group
 from django.utils.safestring import mark_safe
 
 from api.filters import CookingTimeFilter
@@ -11,11 +12,6 @@ from recipes.models import (Follow, Ingredient, ProjectUser, Recipe,
 
 class RecipeIngredientsInLine(admin.TabularInline):
     model = RecipeIngredient
-    extra = INLINE_EXTRA
-
-
-class RecipeTagsInLine(admin.TabularInline):
-    model = Recipe.tags.through
     extra = INLINE_EXTRA
 
 
@@ -78,7 +74,7 @@ class RecipeAdmin(admin.ModelAdmin):
     )
     search_fields = ('name', 'author', 'tags',)
     list_filter = ('author', CookingTimeFilter,)
-    inlines = (RecipeIngredientsInLine, RecipeTagsInLine)
+    inlines = (RecipeIngredientsInLine,)
     empty_value_display = '-empty-'
 
     @admin.display(description='Теги')
@@ -119,3 +115,6 @@ class TagAdmin(RecipeCountAdminMixin, admin.ModelAdmin):
     list_display = ('id', 'name', 'slug', 'recipe_count',)
     search_fields = ('name', 'slug',)
     empty_value_display = '-empty-'
+
+
+admin.site.unregister(Group)

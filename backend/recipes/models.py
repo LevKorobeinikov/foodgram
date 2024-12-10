@@ -230,7 +230,7 @@ class RecipeIngredient(Model):
 
     class Meta:
         ordering = ('recipe',)
-        verbose_name = 'Мера'
+        verbose_name = 'ингредиент'
         verbose_name_plural = 'Количество ингредиентов'
         constraints = (
             UniqueConstraint(
