@@ -62,19 +62,19 @@ class CookingTimeFilter(SimpleListFilter):
             return []
 
         sorted_times = sorted(cooking_times)
-        n = sorted_times[len(sorted_times) // 3]
-        m = sorted_times[2 * len(sorted_times) // 3]
+        self.n = sorted_times[len(sorted_times) // 3]
+        self.m = sorted_times[2 * len(sorted_times) // 3]
 
-        quick_count = Recipe.objects.filter(cooking_time__lt=n).count()
+        quick_count = Recipe.objects.filter(cooking_time__lt=self.n).count()
         medium_count = Recipe.objects.filter(
-            cooking_time__gte=n,
-            cooking_time__lt=m).count()
-        long_count = Recipe.objects.filter(cooking_time__gte=m).count()
+            cooking_time__gte=self.n,
+            cooking_time__lt=self.m).count()
+        long_count = Recipe.objects.filter(cooking_time__gte=self.m).count()
 
         return [
-            ('quick', f'быстрее {n} мин ({quick_count})'),
-            ('medium', f'{n}-{m} мин ({medium_count})'),
-            ('long', f'дольше {m} мин ({long_count})'),
+            ('quick', f'быстрее {self.n} мин ({quick_count})'),
+            ('medium', f'{self.n}-{self.m} мин ({medium_count})'),
+            ('long', f'дольше {self.m} мин ({long_count})'),
         ]
 
     def queryset(self, request, queryset):

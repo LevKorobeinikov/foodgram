@@ -66,7 +66,7 @@ class ProjectUserViewSet(DjoserUserViewSet):
     )
     def subscriptions(self, request):
         user = request.user
-        queryset = user.follower.all()
+        queryset = user.followers.all()
         pages = self.paginate_queryset(queryset)
         serializer = SubscriberDetailSerializer(
             pages,
@@ -129,6 +129,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.action in ('list', 'retrieve', 'get-link'):
             return RecipeReadSerializer
         return RecipeWriteSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
     @action(
         detail=True,

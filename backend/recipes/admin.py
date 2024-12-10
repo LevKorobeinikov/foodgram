@@ -9,12 +9,22 @@ from recipes.models import (Follow, Ingredient, ProjectUser, Recipe,
                             RecipeIngredient, Tag)
 
 
+class RecipeIngredientsInLine(admin.TabularInline):
+    model = RecipeIngredient
+    extra = INLINE_EXTRA
+
+
+class RecipeTagsInLine(admin.TabularInline):
+    model = Recipe.tags.through
+    extra = INLINE_EXTRA
+
+
 @admin.register(ProjectUser)
 class ProjectUserAdmin(RecipeCountAdminMixin, UserAdmin):
     list_display = (
         'username', 'id',
         'email', 'first_name', 'avatar_display',
-        'last_name', 'subscribing_count',
+        'last_name', 'subscriber_count', 'subscribing_count',
         'recipe_count',
     )
     list_filter = ('email', 'first_name')
@@ -33,6 +43,10 @@ class ProjectUserAdmin(RecipeCountAdminMixin, UserAdmin):
         return '-empty-'
 
     @admin.display(description='Количество подписчиков')
+    def subscriber_count(self, obj):
+        return obj.authors.count()
+
+    @admin.display(description='Количество подписок')
     def subscribing_count(self, obj):
         return obj.followers.count()
 
@@ -42,16 +56,6 @@ class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'author',)
     search_fields = ('user', 'author',)
     empty_value_display = '-empty-'
-
-
-class RecipeIngredientsInLine(admin.TabularInline):
-    model = RecipeIngredient
-    extra = INLINE_EXTRA
-
-
-class RecipeTagsInLine(admin.TabularInline):
-    model = Recipe.tags.through
-    extra = INLINE_EXTRA
 
 
 @admin.register(Ingredient)
@@ -87,7 +91,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
     @admin.display(description='Количество в избранном')
     def favorite_count(self, obj):
-        return obj.favorite_set.count()
+        return obj.favorite.count()
 
     @admin.display(description='Продукты')
     @mark_safe

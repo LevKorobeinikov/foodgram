@@ -1355,7 +1355,7 @@
         "model": "recipes.ingredient",
         "pk": 170,
         "fields": {
-            "name": "Буррата",
+            "name": "буррата",
             "measurement_unit": "г"
         }
     },
@@ -9555,7 +9555,7 @@
         "model": "recipes.ingredient",
         "pk": 1195,
         "fields": {
-            "name": "Панифарин",
+            "name": "панифарин",
             "measurement_unit": "г"
         }
     },

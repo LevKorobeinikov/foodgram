@@ -59,7 +59,7 @@ class ProjectUser(AbstractUser):
     )
 
     class Meta:
-        verbose_name = 'Пользователь'
+        verbose_name = 'Пользователя'
         verbose_name_plural = 'Пользователи'
         ordering = ('username',)
 
@@ -83,8 +83,8 @@ class Follow(Model):
     )
 
     class Meta:
-        verbose_name = 'Подписки'
-        verbose_name_plural = 'Subscriptions'
+        verbose_name = 'Подписку'
+        verbose_name_plural = 'Подписки'
         constraints = (
             UniqueConstraint(
                 fields=('author', 'user'),
@@ -189,7 +189,7 @@ class Recipe(Model):
         Tag,
         blank=False,
         verbose_name='Теги рецепта',
-        help_text='Добавьте теги для рецепта',
+        help_text='Добавьте теги для рецепта.',
     )
     pub_date = DateTimeField(
         auto_now_add=True,
@@ -254,7 +254,7 @@ class BaseUserRecipeRelation(Model):
         verbose_name='Пользователь',
     )
     recipe = ForeignKey(
-        'Recipe',
+        Recipe,
         on_delete=CASCADE,
         verbose_name='Рецепт',
     )
@@ -272,6 +272,7 @@ class Favorite(BaseUserRecipeRelation):
     class Meta(BaseUserRecipeRelation.Meta):
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные рецепты'
+        default_related_name = 'favorite'
         constraints = (
             UniqueConstraint(
                 fields=('user', 'recipe'),
@@ -283,8 +284,9 @@ class Favorite(BaseUserRecipeRelation):
 class ShoppingList(BaseUserRecipeRelation):
 
     class Meta(BaseUserRecipeRelation.Meta):
-        verbose_name = "Список покупок"
-        verbose_name_plural = "Списки покупок"
+        verbose_name = 'Список покупок'
+        verbose_name_plural = 'Списки покупок'
+        default_related_name = 'shopping_list'
         constraints = (
             UniqueConstraint(
                 fields=('user', 'recipe'),
