@@ -224,6 +224,9 @@ class SubscriberDetailSerializer(UserSerializer):
         fields = UserSerializer.Meta.fields + (
             'recipes', 'recipes_count'
         )
+        extra_kwargs = {
+            'password': {'write_only': False}
+        }
 
     def get_recipes(self, subscriber):
         request = self.context.get('request')
