@@ -211,22 +211,16 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
-class SubscriberDetailSerializer(UserSerializer):
-    email = serializers.ReadOnlyField(source='author.email')
-    id = serializers.ReadOnlyField(source='author.id')
-    username = serializers.ReadOnlyField(source='author.username')
-    first_name = serializers.ReadOnlyField(source='author.first_name')
-    last_name = serializers.ReadOnlyField(source='author.last_name')
+class SubscriberDetailSerializer(ProjectUserSerializer):
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.ReadOnlyField(source='author.recipes.count')
 
-    class Meta(UserSerializer.Meta):
-        fields = UserSerializer.Meta.fields + (
+    class Meta(ProjectUserSerializer.Meta):
+        model = User
+        fields = ProjectUserSerializer.Meta.fields + (
             'recipes', 'recipes_count'
         )
-        extra_kwargs = {
-            'password': {'write_only': False}
-        }
+        read_only_fields = ('__all__',)
 
     def get_recipes(self, subscriber):
         request = self.context.get('request')
