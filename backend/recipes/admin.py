@@ -33,7 +33,7 @@ class ProjectUserAdmin(RecipeCountAdminMixin, UserAdmin):
         if obj.avatar:
             return (
                 f'<img src="{obj.avatar.url}"'
-                f'width: 50px; height: 50px;'
+                f'width: 10px; height: 10px;'
                 f'border-radius: 50%;" alt="Avatar" />'
             )
         return '-empty-'
