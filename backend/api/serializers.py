@@ -130,13 +130,12 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         many=True, label='Ингредиенты'
     )
     image = Base64ImageField(allow_null=True, label='Изображения')
-    author = ProjectUserSerializer(required=False)
 
     class Meta:
         model = Recipe
         fields = (
             'ingredients', 'tags', 'image', 'name',
-            'text', 'cooking_time', 'author'
+            'text', 'cooking_time'
         )
 
     def validate_tags(self, tags):
@@ -187,9 +186,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         user = self.context.get('request').user
-        recipe = super().create(validated_data)
-        recipe.author = user
-        recipe.save()
+        recipe = super().create({**validated_data, 'author': user})
         self.create_tags(tags, recipe)
         self.create_ingredients(ingredients, recipe)
         return recipe
