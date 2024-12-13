@@ -222,6 +222,7 @@ class SubscriberDetailSerializer(UserSerializer):
 
     class Meta(UserSerializer.Meta):
         model = Follow
+        exclude = ('password',)
         fields = UserSerializer.Meta.fields + (
             'recipes', 'recipes_count'
         )
