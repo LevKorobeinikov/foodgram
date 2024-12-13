@@ -55,6 +55,7 @@ class ProjectUser(AbstractUser):
         'username',
         'first_name',
         'last_name',
+        'password',
     )
 
     class Meta:
