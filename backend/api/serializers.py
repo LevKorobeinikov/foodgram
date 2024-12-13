@@ -212,11 +212,15 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
 
 
 class SubscriberDetailSerializer(UserSerializer):
+    email = serializers.ReadOnlyField(source='author.email')
+    id = serializers.ReadOnlyField(source='author.id')
+    username = serializers.ReadOnlyField(source='author.username')
+    first_name = serializers.ReadOnlyField(source='author.first_name')
+    last_name = serializers.ReadOnlyField(source='author.last_name')
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.ReadOnlyField(source='author.recipes.count')
 
     class Meta(UserSerializer.Meta):
-
         fields = UserSerializer.Meta.fields + (
             'recipes', 'recipes_count'
         )
