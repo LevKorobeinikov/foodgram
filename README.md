@@ -1,7 +1,7 @@
 ![workflow](https://github.com/LevKorobeinikov/foodgram/actions/workflows/main.yml/badge.svg)
 
 # Foodgram
-## Автор проекта
+## Автор проекта - 
  
 [Коробекйников Лев Сергеевич](https://github.com/LevKorobeinikov)
 
