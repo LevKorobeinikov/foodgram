@@ -7,9 +7,9 @@ def shopping_list_to_txt(ingredients, recipes):
         'Продукты:',
         *[
             f'{index + 1}.'
-            f'{ingredient['ingredient__name'].capitalize()} -'
-            f'{ingredient['sum']}'
-            f'{ingredient['ingredient__measurement_unit']}'
+            f'{ingredient["ingredient__name"].capitalize()} -'
+            f'{ingredient["sum"]}'
+            f'{ingredient["ingredient__measurement_unit"]}'
             for index, ingredient in enumerate(ingredients)
         ],
         'Рецепты:',
