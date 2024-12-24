@@ -48,7 +48,7 @@ class RecipeFilter(FilterSet):
             else None
         )
         if value and user:
-            return recipes.filter(shopping_list__user_id=user.id)
+            return recipes.filter(shoppinglist__user_id=user.id)
         return recipes
 
 

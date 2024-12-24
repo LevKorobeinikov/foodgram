@@ -7,20 +7,27 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import (AllowAny, IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import (
+    AllowAny, IsAuthenticated,
+    IsAuthenticatedOrReadOnly
+)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import LimitPagination
 from api.permissions import IsAuthorOrReadOnly
-from api.serializers import (AvatarSerializer, IngredientSerializer,
-                             ProjectUserSerializer, RecipeReadSerializer,
-                             RecipeWriteSerializer, ShortRecipeSerializer,
-                             SubscriberDetailSerializer, TagSerializer)
-from recipes.models import (Favorite, Follow, Ingredient, Recipe,
-                            RecipeIngredient, ShoppingList, Tag)
+from api.serializers import (
+    AvatarSerializer, IngredientSerializer,
+    ProjectUserSerializer, RecipeReadSerializer,
+    RecipeWriteSerializer, ShortRecipeSerializer,
+    SubscriberDetailSerializer, TagSerializer
+)
+from recipes.models import (
+    Favorite, Follow, Ingredient, Recipe,
+    RecipeIngredient, ShoppingList, Tag
+)
+from api.utils import shopping_list_to_txt
 
 User = get_user_model()
 
@@ -65,11 +72,8 @@ class ProjectUserViewSet(DjoserUserViewSet):
         url_name='subscriptions',
     )
     def subscriptions(self, request):
-        user = request.user
-        queryset = user.followers.all()
-        pages = self.paginate_queryset(queryset)
         serializer = SubscriberDetailSerializer(
-            pages,
+            self.paginate_queryset(request.user.followers.all()),
             many=True,
             context={'request': request}
         )
@@ -87,19 +91,19 @@ class ProjectUserViewSet(DjoserUserViewSet):
             raise ValidationError(
                 'Вы не можете подписаться или отписаться от себя.'
             )
-        if self.request.method == 'POST':
-            queryset, created = Follow.objects.get_or_create(
+        if self.request.method != 'POST':
+            get_object_or_404(Follow, user=user, author=author).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            follow_instance, created = Follow.objects.get_or_create(
                 author=author, user=user
             )
             if not created:
                 raise ValidationError('Вы уже подписаны на пользователя.')
             serializer = SubscriberDetailSerializer(
-                queryset, context={'request': request}
+                follow_instance, context={'request': request}
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        elif self.request.method == 'DELETE':
-            get_object_or_404(Follow, user=user, author=author).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -139,7 +143,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def get_link(self, request, pk=None):
         if not Recipe.objects.filter(pk=pk).exists():
-            raise ValidationError('Недопустимый ключ ID')
+            raise ValidationError(f'Рецепт с ID {pk} не найден')
         return Response(
             {
                 'short-link': request.build_absolute_uri(
@@ -150,12 +154,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
 
     @staticmethod
-    def toggle_item(model, recipe, user, error_message):
-
-        if model.objects.filter(recipe=recipe, user=user).exists():
-            raise ValidationError(error_message)
-        obj, created = model.objects.get_or_create(recipe=recipe, user=user)
-        return obj
+    def toggle_item(
+        model, pk,
+        request, error_message,
+        serializer_class=None
+    ):
+        user = request.user
+        recipe = get_object_or_404(Recipe, id=pk)
+        if request.method == 'POST':
+            if model.objects.filter(recipe=recipe, user=user).exists():
+                raise ValidationError(error_message)
+            _, created = model.objects.get_or_create(recipe=recipe, user=user)
+            serializer = serializer_class(recipe, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        elif request.method == 'DELETE':
+            get_object_or_404(model, recipe=recipe, user=user).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
         detail=True,
@@ -165,29 +179,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name='shopping_cart',
     )
     def shopping_cart(self, request, pk):
-        user = request.user
-        recipe = get_object_or_404(Recipe, id=pk)
-
-        if request.method == 'POST':
-            self.toggle_item(
-                ShoppingList,
-                recipe, user,
-                f'Рецепт "{recipe.name}" уже есть в списке покупок.'
-            )
-            serializer = ShortRecipeSerializer(
-                recipe, context={'request': request}
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        elif request.method == 'DELETE':
-            get_object_or_404(ShoppingList, recipe__id=pk, user=user).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @staticmethod
-    def shopping_list_to_txt(ingredients):
-        return '\n'.join(
-            f'{ingredient["ingredient__name"]} - {ingredient["sum"]} '
-            f'{ingredient["ingredient__measurement_unit"]}'
-            for ingredient in ingredients
+        return self.toggle_item(
+            model=ShoppingList,
+            pk=pk,
+            request=request,
+            error_message=(
+                f'Рецепт {Recipe.objects.get(id=pk).name}'
+                f'уже есть в списке покупок.'
+            ),
+            serializer_class=ShortRecipeSerializer,
         )
 
     @action(
@@ -200,11 +200,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         ingredients = (
             RecipeIngredient.objects.filter(
-                recipe__shopping_list__user=request.user)
+                recipe__shoppinglist__user=request.user)
             .values('ingredient__name', 'ingredient__measurement_unit')
             .annotate(sum=Sum('amount'))
         )
-        shopping_list = self.shopping_list_to_txt(ingredients)
+        recipes = (
+            Recipe.objects.filter(shoppinglist__user=request.user)
+            .values_list('name', flat=True)
+            .distinct()
+        )
+        shopping_list = shopping_list_to_txt(ingredients, recipes)
         return FileResponse(shopping_list, content_type='text/plain')
 
     @action(
@@ -215,19 +220,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name='favorite',
     )
     def favorite(self, request, pk):
-        user = request.user
-        recipe = get_object_or_404(Recipe, id=pk)
-
-        if request.method == 'POST':
-            self.toggle_item(
-                Favorite,
-                recipe, user,
-                f'Рецепт "{recipe.name}" уже есть в избранном.'
-            )
-            serializer = ShortRecipeSerializer(
-                recipe, context={'request': request}
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        elif request.method == 'DELETE':
-            get_object_or_404(Favorite, recipe=recipe, user=user).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        return self.toggle_item(
+            model=Favorite,
+            pk=pk,
+            request=request,
+            error_message=(
+                f'Рецепт {Recipe.objects.get(id=pk).name}'
+                f'уже есть в избранном.'
+            ),
+            serializer_class=ShortRecipeSerializer
+        )

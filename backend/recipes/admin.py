@@ -6,8 +6,10 @@ from django.utils.safestring import mark_safe
 from api.filters import CookingTimeFilter
 from recipes.constants import INLINE_EXTRA
 from recipes.mixins import RecipeCountAdminMixin
-from recipes.models import (Follow, Ingredient, ProjectUser, Recipe,
-                            RecipeIngredient, Tag)
+from recipes.models import (
+    Follow, Ingredient, ProjectUser, Recipe,
+    RecipeIngredient, Tag
+)
 
 
 class RecipeIngredientsInLine(admin.TabularInline):
@@ -30,21 +32,20 @@ class ProjectUserAdmin(RecipeCountAdminMixin, UserAdmin):
     @mark_safe
     @admin.display(description='Аватар')
     def avatar_display(self, obj):
-        if obj.avatar:
-            return (
-                f'<img src="{obj.avatar.url}"'
-                f'width: 10px; height: 10px;'
-                f'border-radius: 50%;" alt="Avatar" />'
-            )
-        return '-empty-'
+        return (
+            f'<img src="{obj.avatar.url}"'
+            f'width: 10px; height: 10px;'
+            f'border-radius: 50%;" alt="Avatar" />'
+            if obj.avatar else ''
+        )
 
-    @admin.display(description='Количество подписчиков')
-    def subscriber_count(self, obj):
-        return obj.authors.count()
+    @admin.display(description='Подписчики')
+    def subscriber_count(self, author):
+        return author.authors.count()
 
-    @admin.display(description='Количество подписок')
-    def subscribing_count(self, obj):
-        return obj.followers.count()
+    @admin.display(description='Подписки')
+    def subscribing_count(self, user):
+        return user.followers.count()
 
 
 @admin.register(Follow)
@@ -61,6 +62,7 @@ class IngredientAdmin(RecipeCountAdminMixin, admin.ModelAdmin):
         'measurement_unit', 'recipe_count',
     )
     search_fields = ('name', 'measurement_unit',)
+    list_filter = ('measurement_unit',)
     empty_value_display = '-empty-'
 
 
@@ -79,13 +81,12 @@ class RecipeAdmin(admin.ModelAdmin):
 
     @admin.display(description='Теги')
     @mark_safe
-    def tags_display(self, obj):
-        return ', '.join(
-            f'<span style="color: #007bff;">'
-            f'{tag.name}</span>' for tag in obj.tags.all()
+    def tags_display(self, recipe):
+        return '<br>'.join(
+            tag.name for tag in recipe.tags.all()
         )
 
-    @admin.display(description='Количество в избранном')
+    @admin.display(description='Сохранено в избранном')
     def favorite_count(self, obj):
         return obj.favorite.count()
 
@@ -93,21 +94,20 @@ class RecipeAdmin(admin.ModelAdmin):
     @mark_safe
     def ingredients_display(self, obj):
         return '<br>'.join(
-            f'<span>{ingredient.ingredient.name} —'
+            f'{ingredient.ingredient.name} —'
             f'{ingredient.amount}'
-            f'{ingredient.ingredient.measurement_unit}</span>'
+            f'{ingredient.ingredient.measurement_unit}'
             for ingredient in obj.recipe_ingredients.all()
         )
 
     @admin.display(description='Картинка')
     @mark_safe
     def image_display(self, obj):
-        if obj.image:
-            return (
-                f'<img src="{obj.image.url}"'
-                f'style="width: 100px; height: auto;" alt="Recipe Image"/>'
-            )
-        return '-empty-'
+        return (
+            f'<img src="{obj.image.url}"'
+            f'style="width: 100px; height: auto;" alt="Recipe Image"/>'
+            if obj.image else ''
+        )
 
 
 @admin.register(Tag)
