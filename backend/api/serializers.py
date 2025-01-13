@@ -144,7 +144,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     def validate_ingredients(self, ingredients):
         if not ingredients:
             raise serializers.ValidationError('Добавьте ингредиент')
-        ingredient_ids = [ingredient.id for ingredient in ingredients]
+        ingredient_ids = [ingredient['id'] for ingredient in ingredients]
         if len(ingredient_ids) != len(set(ingredient_ids)):
             raise serializers.ValidationError(
                 'Ингредиенты должны быть уникальными'

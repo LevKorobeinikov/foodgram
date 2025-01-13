@@ -38,7 +38,7 @@ class RecipeFilter(FilterSet):
             else None
         )
         if value and user:
-            return recipes.filter(favorite__user_id=user.id)
+            return recipes.filter(favorites__user_id=user.id)
         return recipes
 
     def filter_is_in_shopping_cart(self, recipes, name, value):
@@ -48,7 +48,7 @@ class RecipeFilter(FilterSet):
             else None
         )
         if value and user:
-            return recipes.filter(shoppinglist__user_id=user.id)
+            return recipes.filter(shoppinglists__user_id=user.id)
         return recipes
 
 

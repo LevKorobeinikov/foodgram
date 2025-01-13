@@ -76,7 +76,8 @@ class ProjectUserViewSet(DjoserUserViewSet):
             SubscriberDetailSerializer(
                 self.paginate_queryset(request.user.followers.all()),
                 many=True,
-                context={'request': request}.data)
+                context={'request': request}
+            ).data
         )
 
     @action(
@@ -133,6 +134,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.action in ('list', 'retrieve', 'get-link'):
             return RecipeReadSerializer
         return RecipeWriteSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
     @action(
         detail=True,
@@ -197,7 +201,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         ingredients = (
             RecipeIngredient.objects.filter(
-                recipe__shoppinglist__user=request.user)
+                recipe__shoppinglists__user=request.user)
             .values('ingredient__name', 'ingredient__measurement_unit')
             .annotate(sum=Sum('amount'))
             .order_by('ingredient__name')
