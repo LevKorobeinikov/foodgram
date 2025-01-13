@@ -77,8 +77,7 @@ class RecipeIngredientWriteSerializer(serializers.ModelSerializer):
         min_value=INGREDIENT_AMOUNT_MIN,
         error_messages={
             'min_value':
-            f'Количество продуктов должно быть больше {
-                INGREDIENT_AMOUNT_ZERO}.'
+            f'Количество продуктов должно быть больше {INGREDIENT_AMOUNT_ZERO}'
         }
     )
 
