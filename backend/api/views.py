@@ -72,12 +72,12 @@ class ProjectUserViewSet(DjoserUserViewSet):
         url_name='subscriptions',
     )
     def subscriptions(self, request):
-        serializer = SubscriberDetailSerializer(
-            self.paginate_queryset(request.user.followers.all()),
-            many=True,
-            context={'request': request}
+        return self.get_paginated_response(
+            SubscriberDetailSerializer(
+                self.paginate_queryset(request.user.followers.all()),
+                many=True,
+                context={'request': request}.data)
         )
-        return self.get_paginated_response(serializer.data)
 
     @action(
         detail=True,
@@ -94,16 +94,16 @@ class ProjectUserViewSet(DjoserUserViewSet):
         if self.request.method != 'POST':
             get_object_or_404(Follow, user=user, author=author).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            follow_instance, created = Follow.objects.get_or_create(
-                author=author, user=user
+        follow_instance, created = Follow.objects.get_or_create(
+            author=author, user=user
+        )
+        if not created:
+            raise ValidationError(
+                f'Вы уже подписаны на пользователя {author.username}'
             )
-            if not created:
-                raise ValidationError('Вы уже подписаны на пользователя.')
-            serializer = SubscriberDetailSerializer(
-                follow_instance, context={'request': request}
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(SubscriberDetailSerializer(
+            follow_instance, context={'request': request}
+        ).data, status=status.HTTP_201_CREATED)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -154,7 +154,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
 
     @staticmethod
-    def toggle_item(
+    def manage_list_item(
         model, pk,
         request, error_message,
         serializer_class=None
@@ -162,11 +162,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == 'POST':
-            if model.objects.filter(recipe=recipe, user=user).exists():
-                raise ValidationError(error_message)
             _, created = model.objects.get_or_create(recipe=recipe, user=user)
-            serializer = serializer_class(recipe, context={'request': request})
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            if not created:
+                raise ValidationError(f'{error_message}: {recipe.name}')
+            return Response(
+                serializer_class(recipe, context={'request': request}).data,
+                status=status.HTTP_201_CREATED
+            )
         elif request.method == 'DELETE':
             get_object_or_404(model, recipe=recipe, user=user).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -175,18 +177,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=True,
         methods=['POST', 'DELETE'],
         permission_classes=[IsAuthenticated],
-        url_path='shopping_cart',
-        url_name='shopping_cart',
     )
     def shopping_cart(self, request, pk):
-        return self.toggle_item(
+        return self.manage_list_item(
             model=ShoppingList,
             pk=pk,
             request=request,
-            error_message=(
-                f'Рецепт {Recipe.objects.get(id=pk).name}'
-                f'уже есть в списке покупок.'
-            ),
+            error_message=('Рецепт уже есть в списке покупок.'),
             serializer_class=ShortRecipeSerializer,
         )
 
@@ -203,30 +200,27 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 recipe__shoppinglist__user=request.user)
             .values('ingredient__name', 'ingredient__measurement_unit')
             .annotate(sum=Sum('amount'))
+            .order_by('ingredient__name')
         )
         recipes = (
-            Recipe.objects.filter(shoppinglist__user=request.user)
-            .values_list('name', flat=True)
+            Recipe.objects.filter(shoppinglists__user=request.user)
             .distinct()
         )
-        shopping_list = shopping_list_to_txt(ingredients, recipes)
-        return FileResponse(shopping_list, content_type='text/plain')
+        return FileResponse(
+            shopping_list_to_txt(ingredients, recipes),
+            content_type='text/plain'
+        )
 
     @action(
         detail=True,
         methods=['POST', 'DELETE'],
         permission_classes=[IsAuthenticated],
-        url_path='favorite',
-        url_name='favorite',
     )
     def favorite(self, request, pk):
-        return self.toggle_item(
+        return self.manage_list_item(
             model=Favorite,
             pk=pk,
             request=request,
-            error_message=(
-                f'Рецепт {Recipe.objects.get(id=pk).name}'
-                f'уже есть в избранном.'
-            ),
+            error_message=('Рецепт уже есть в избранном.'),
             serializer_class=ShortRecipeSerializer
         )

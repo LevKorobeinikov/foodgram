@@ -4,7 +4,7 @@ from django.db.models import (
     CASCADE, CharField, CheckConstraint,
     DateTimeField, EmailField, F, ForeignKey,
     ImageField, ManyToManyField, Model,
-    PositiveSmallIntegerField, Q, SlugField,
+    PositiveSmallIntegerField, PositiveIntegerField, Q, SlugField,
     TextField, UniqueConstraint
 )
 from django.db.models.functions import Length
@@ -109,7 +109,7 @@ class Ingredient(Model):
         max_length=INGREDIENT_NAME_MAX_LENGTH,
         unique=True,
         verbose_name='Название',
-        help_text='Введите название ингредиента',
+        help_text='Введите название продукта',
     )
     measurement_unit = CharField(
         max_length=MEASUREMENT_UNIT_MAX_LENGTH,
@@ -168,13 +168,10 @@ class Recipe(Model):
         Ingredient,
         through='RecipeIngredient',
         verbose_name='Продукты',
-        help_text='Добавьте ингредиенты для рецепта',
+        help_text='Добавьте продукты для рецепта',
     )
-    cooking_time = PositiveSmallIntegerField(
-        validators=(MinValueValidator(
-            COOKING_TIME_MIN,
-            f'Не может быть меньше {COOKING_TIME_MIN} минут',
-        ),),
+    cooking_time = PositiveIntegerField(
+        validators=[MinValueValidator(COOKING_TIME_MIN)],
         verbose_name='Время приготовления (минуты)',
         help_text='Укажите время приготовления в минутах',
     )
@@ -224,10 +221,7 @@ class RecipeIngredient(Model):
         verbose_name='Продукт'
     )
     amount = PositiveSmallIntegerField(
-        validators=(MinValueValidator(
-            INGREDIENT_AMOUNT_MIN,
-            f'Минимальное количество: {INGREDIENT_AMOUNT_MIN}',
-        ),),
+        validators=[MinValueValidator(INGREDIENT_AMOUNT_MIN)],
         verbose_name='Мера',
     )
 
@@ -255,18 +249,17 @@ class BaseUserRecipeRelation(Model):
         ProjectUser,
         on_delete=CASCADE,
         verbose_name='Пользователь',
-        related_name='%(class)s',
     )
     recipe = ForeignKey(
         Recipe,
         on_delete=CASCADE,
         verbose_name='Рецепт',
-        related_name='%(class)s',
     )
 
     class Meta:
         abstract = True
         ordering = ('-id',)
+        default_related_name = '%(class)ss'
         constraints = [
             UniqueConstraint(
                 fields=('user', 'recipe'),

@@ -5,11 +5,16 @@ from django.utils.safestring import mark_safe
 
 from api.filters import CookingTimeFilter
 from recipes.constants import INLINE_EXTRA
-from recipes.mixins import RecipeCountAdminMixin
 from recipes.models import (
-    Follow, Ingredient, ProjectUser, Recipe,
-    RecipeIngredient, Tag
+    Favorite, Follow, Ingredient, ProjectUser, Recipe,
+    RecipeIngredient, ShoppingList, Tag
 )
+
+
+class RecipeCountAdminMixin:
+    @admin.display(description='Количество рецептов')
+    def recipe_count(self, obj):
+        return obj.recipes.count()
 
 
 class RecipeIngredientsInLine(admin.TabularInline):
@@ -31,12 +36,12 @@ class ProjectUserAdmin(RecipeCountAdminMixin, UserAdmin):
 
     @mark_safe
     @admin.display(description='Аватар')
-    def avatar_display(self, obj):
+    def avatar_display(self, user):
         return (
-            f'<img src="{obj.avatar.url}"'
+            f'<img src="{user.avatar.url}"'
             f'width: 10px; height: 10px;'
             f'border-radius: 50%;" alt="Avatar" />'
-            if obj.avatar else ''
+            if user.avatar else ''
         )
 
     @admin.display(description='Подписчики')
@@ -87,8 +92,8 @@ class RecipeAdmin(admin.ModelAdmin):
         )
 
     @admin.display(description='Сохранено в избранном')
-    def favorite_count(self, obj):
-        return obj.favorite.count()
+    def favorite_count(self, recipe):
+        return recipe.favorites.count()
 
     @admin.display(description='Продукты')
     @mark_safe
@@ -114,6 +119,30 @@ class RecipeAdmin(admin.ModelAdmin):
 class TagAdmin(RecipeCountAdminMixin, admin.ModelAdmin):
     list_display = ('id', 'name', 'slug', 'recipe_count',)
     search_fields = ('name', 'slug',)
+    empty_value_display = '-empty-'
+
+
+@admin.register(RecipeIngredient)
+class RecipeIngredientAdmin(admin.ModelAdmin):
+    list_display = ('id', 'recipe', 'ingredient', 'amount',)
+    search_fields = ('recipe__name', 'ingredient__name',)
+    list_filter = ('recipe__name', 'ingredient__name',)
+    empty_value_display = '-empty-'
+
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'recipe',)
+    search_fields = ('user__username', 'recipe__name',)
+    list_filter = ('user__username', 'recipe__name',)
+    empty_value_display = '-empty-'
+
+
+@admin.register(ShoppingList)
+class ShoppingListAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'recipe',)
+    search_fields = ('user__username', 'recipe__name',)
+    list_filter = ('user__username', 'recipe__name',)
     empty_value_display = '-empty-'
 
 

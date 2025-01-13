@@ -1,19 +1,31 @@
 from datetime import date
 
+SHOPPING_LIST_TEMPLATE = (
+    'Список покупок на {today}:\n'
+    'Продукты:\n'
+    '{products}\n'
+    'Рецепты:\n'
+    '{recipes}\n'
+)
+PRODUCTS = '{index}. {name} - {amount} {unit}'
+RECIPES = '- {recipe}'
+
 
 def shopping_list_to_txt(ingredients, recipes):
-    return '\n'.join([
-        f'Список покупок на {date.today()}:',
-        'Продукты:',
-        *[
-            f'{index + 1}.'
-            f'{ingredient["ingredient__name"].capitalize()} -'
-            f'{ingredient["sum"]}'
-            f'{ingredient["ingredient__measurement_unit"]}'
-            for index, ingredient in enumerate(ingredients)
-        ],
-        'Рецепты:',
-        *[
-            f'- {recipe}' for recipe in recipes
-        ]
-    ])
+    products = '\n'.join(
+        PRODUCTS.format(
+            index=index,
+            name=ingredient['ingredient__name'].capitalize(),
+            amount=ingredient['sum'],
+            unit=ingredient['ingredient__measurement_unit'],
+        )
+        for index, ingredient in enumerate(ingredients, start=1)
+    )
+    recipes = '\n'.join(
+        RECIPES.format(recipe=recipe) for recipe in recipes
+    )
+    return SHOPPING_LIST_TEMPLATE.format(
+        today=date.today(),
+        products=products,
+        recipes=recipes,
+    )
