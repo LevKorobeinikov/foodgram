@@ -2,12 +2,9 @@ from datetime import date
 
 SHOPPING_LIST_TEMPLATE = (
     'Список покупок на {today}:\n'
-    'Продукты:\n'
-    '{products}\n'
-    'Рецепты:\n'
-    '{recipes}\n'
+    'Продукты: {products}; Рецепты: {recipes}.'
 )
-PRODUCTS = '{index}. {name} - {amount} {unit}'
+PRODUCTS = '{index}. {name} - {amount} (ед.изм. - {unit})'
 RECIPES = '- {recipe}'
 
 

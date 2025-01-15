@@ -22,15 +22,16 @@ class BaseImportCommand(BaseCommand):
                 new_objects = [
                     self.model(**item)
                     for item in data
-                    if not self.model.objects.filter(
-                        name=item['name']).exists()
                 ]
-                self.model.objects.bulk_create(new_objects)
+                added_ingredients = self.model.objects.bulk_create(
+                    new_objects,
+                    ignore_conflicts=True
+                )
                 self.stdout.write(self.style.SUCCESS(
-                    f'{len(new_objects)} '
-                    f'записей успешно добавлено в {self.model.__name__}.'
+                    f'Успешно добавлены в {self.model.__name__} - '
+                    f'{len(added_ingredients)} записей из {len(new_objects)}.'
                 ))
         except Exception as e:
             self.stderr.write(self.style.ERROR(
-                f'Ошибка импорта данных: {e}'
+                f'Ошибка импорта данных из файла {file_path}: {e}'
             ))

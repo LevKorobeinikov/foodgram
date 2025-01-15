@@ -100,7 +100,7 @@ class ProjectUserViewSet(DjoserUserViewSet):
         )
         if not created:
             raise ValidationError(
-                f'Вы уже подписаны на пользователя {author.username}'
+                f'Вы уже подписаны на пользователя {author}'
             )
         return Response(SubscriberDetailSerializer(
             follow_instance, context={'request': request}

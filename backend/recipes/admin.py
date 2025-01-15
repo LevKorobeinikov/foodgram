@@ -45,8 +45,8 @@ class ProjectUserAdmin(RecipeCountAdminMixin, UserAdmin):
         )
 
     @admin.display(description='Подписчики')
-    def subscriber_count(self, author):
-        return author.authors.count()
+    def subscriber_count(self, user):
+        return user.authors.count()
 
     @admin.display(description='Подписки')
     def subscribing_count(self, user):
@@ -91,7 +91,7 @@ class RecipeAdmin(admin.ModelAdmin):
             tag.name for tag in recipe.tags.all()
         )
 
-    @admin.display(description='Сохранено в избранном')
+    @admin.display(description='В избранном')
     def favorite_count(self, recipe):
         return recipe.favorites.count()
 

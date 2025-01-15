@@ -5,9 +5,7 @@ from django.core.files.base import ContentFile
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
-from recipes.constants import (
-    INGREDIENT_AMOUNT_MIN, INGREDIENT_AMOUNT_ZERO
-)
+from recipes.constants import (INGREDIENT_AMOUNT_MIN)
 from recipes.models import (
     Favorite, Ingredient, Recipe,
     RecipeIngredient, ShoppingList, Tag
@@ -73,13 +71,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 class RecipeIngredientWriteSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all(),)
-    amount = serializers.IntegerField(
-        min_value=INGREDIENT_AMOUNT_MIN,
-        error_messages={
-            'min_value':
-            f'Количество продуктов должно быть больше {INGREDIENT_AMOUNT_ZERO}'
-        }
-    )
+    amount = serializers.IntegerField(min_value=INGREDIENT_AMOUNT_MIN,)
 
     class Meta:
         model = RecipeIngredient
@@ -144,10 +136,10 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     def validate_ingredients(self, ingredients):
         if not ingredients:
             raise serializers.ValidationError('Добавьте ингредиент')
-        ingredient_ids = [ingredient['id'] for ingredient in ingredients]
-        if len(ingredient_ids) != len(set(ingredient_ids)):
+        ingredient_ids = {ingredient['id'] for ingredient in ingredients}
+        if len(ingredient_ids) != len(ingredients):
             raise serializers.ValidationError(
-                'Ингредиенты должны быть уникальными'
+                'Продкуты должны быть уникальными'
             )
         return ingredients
 
