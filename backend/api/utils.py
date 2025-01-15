@@ -1,7 +1,7 @@
 from datetime import date
 
-SHOPPING_LIST_TEMPLATE = (
-    'Список покупок на {today}:\n'
+SHOPPING_LIST_TEMPLATE = '\n'.join(
+    'Список покупок на {today}:'
     'Продукты: {products}; Рецепты: {recipes}.'
 )
 PRODUCTS = '{index}. {name} - {amount} (ед.изм. - {unit})'
