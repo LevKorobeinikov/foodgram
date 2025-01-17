@@ -198,7 +198,7 @@ class SubscriberDetailSerializer(ProjectUserSerializer):
     def get_recipes(self, subscriber):
         request = self.context.get('request')
         return ShortRecipeSerializer(
-            subscriber.author.recipes.all()[:int(
+            subscriber.recipes.all()[:int(
                 request.GET.get('recipes_limit', 10**10)
             )],
             many=True,

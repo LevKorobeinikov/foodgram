@@ -72,9 +72,11 @@ class ProjectUserViewSet(DjoserUserViewSet):
         url_name='subscriptions',
     )
     def subscriptions(self, request):
+        subscriptions = request.user.followers.all()
+        authors = [subscription.author for subscription in subscriptions]
         return self.get_paginated_response(
             SubscriberDetailSerializer(
-                self.paginate_queryset(request.user.followers.all()),
+                self.paginate_queryset(authors),
                 many=True,
                 context={'request': request}
             ).data
