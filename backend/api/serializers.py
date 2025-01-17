@@ -5,7 +5,7 @@ from django.core.files.base import ContentFile
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
-from recipes.constants import (INGREDIENT_AMOUNT_MIN, COOKING_TIME_ZERO)
+from recipes.constants import (INGREDIENT_AMOUNT_MIN, COOKING_TIME_MIN)
 from recipes.models import (
     Favorite, Ingredient, Recipe,
     RecipeIngredient, ShoppingList, Tag
@@ -120,6 +120,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     )
     ingredients = RecipeIngredientWriteSerializer(many=True,)
     image = Base64ImageField(allow_null=True,)
+    cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
@@ -144,10 +145,11 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return ingredients
 
     def validate_cooking_time(self, cooking_time):
-        if cooking_time <= COOKING_TIME_ZERO:
+        if cooking_time < COOKING_TIME_MIN:
             raise serializers.ValidationError(
                 'Время приготовления должно быть больше 0'
             )
+        return cooking_time
 
     def to_representation(self, instance):
         return RecipeReadSerializer(instance, context=self.context).data
