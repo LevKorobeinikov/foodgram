@@ -103,7 +103,7 @@ class ProjectUserViewSet(DjoserUserViewSet):
                 f'Вы уже подписаны на пользователя {author}'
             )
         return Response(SubscriberDetailSerializer(
-            follow_instance, context={'request': request}
+            author, context={'request': request}
         ).data, status=status.HTTP_201_CREATED)
 
 

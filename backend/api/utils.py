@@ -7,7 +7,7 @@ SHOPPING_LIST_TEMPLATE = '\n'.join([
     'Рецепты:',
     '{recipes}'
 ])
-PRODUCTS = '{index}. {name} - {amount} (ед.изм. - {unit})'
+PRODUCTS = '{index}. {name} - {amount} ({unit})'
 RECIPES = '- {recipe}'
 
 
